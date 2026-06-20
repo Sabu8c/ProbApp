@@ -18,6 +18,7 @@ services:
       - app
     networks:
       - probapp-net
-  networks:
-    probapp-net:
-      driver: bridge
+ 
+networks:
+  probapp-net:
+    driver: bridge
