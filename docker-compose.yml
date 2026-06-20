@@ -3,8 +3,21 @@ version: "3.8"
 services:
   app:
     build: .
-    container_name: probapp_streamlit
     restart: unless-stopped
     ports:
       - "8501:8501"
-
+    networks:
+      - probapp-net
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+    depends_on:
+      - app
+    networks:
+      - probapp-net
+  networks:
+    probapp-net:
+      driver: bridge
