@@ -6,5 +6,5 @@ services:
     container_name: probapp_streamlit
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8501:8501"
+      - "8501:8501"
 
