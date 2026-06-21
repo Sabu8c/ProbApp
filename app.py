@@ -417,7 +417,10 @@ elif tool == "Summary Stats & Boxplots":
         
         st.subheader("Comparative Boxplot")
         fig, ax = plt.subplots()
-        ax.boxplot(datasets, labels=labels)
+        try:
+            ax.boxplot(datasets, tick_labels=labels)
+        except TypeError:
+            ax.boxplot(datasets, labels=labels)
         ax.set_ylabel("Values")
         ax.set_title("Boxplot Comparison")
         st.pyplot(fig)
