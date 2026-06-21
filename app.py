@@ -155,11 +155,11 @@ KEYWORD_BANK = {
 }
 
 # Sidebar Navigation
-st.sidebar.title("🎲 MICRO-110 Probability Solver")
+st.sidebar.title("ProbApp | MICRO-110")
 st.sidebar.markdown("---")
 
 # Keyword Search Tool
-search_query = st.sidebar.text_input("🔍 Search Keyword / Formula (e.g. 'bayes', 'trimmed'):").strip().lower()
+search_query = st.sidebar.text_input("Search Keyword / Formula:").strip().lower()
 
 tool = None
 
