@@ -151,6 +151,10 @@ KEYWORD_BANK = {
     "T-Tests (1-sample, Welch, Paired)": {
         "desc": "Perform 1-sample, 2-sample Welch, and paired T-tests.",
         "keywords": ["t-test", "hypothesis test", "unknown sigma", "welch", "paired", "difference", "p-value", "before", "after", "paired differences"]
+    },
+    "ANOVA (Analysis of Variance)": {
+        "desc": "Perform One-Way ANOVA from raw data or solve an incomplete ANOVA summary table with missing values.",
+        "keywords": ["anova", "analysis of variance", "f-test", "between treatments", "within treatments", "ssb", "ssw", "sst", "msb", "msw", "f-ratio", "missing table", "incomplete table"]
     }
 }
 
@@ -226,7 +230,8 @@ if tool is None:
             "Method of Moments & MLE",
             "Confidence Intervals",
             "Z-Tests (1- & 2-sample)",
-            "T-Tests (1-sample, Welch, Paired)"
+            "T-Tests (1-sample, Welch, Paired)",
+            "ANOVA (Analysis of Variance)"
         ])
 
 # ==========================================
@@ -1943,3 +1948,295 @@ elif tool == "T-Tests (1-sample, Welch, Paired)":
                 st.dataframe(pd.DataFrame({"Sample1": d1, "Sample2": d2, "Difference (S2−S1)": diffs}))
         except Exception as e:
             st.error(f"Error: {e}")
+
+# ==========================================
+# 22. ANOVA (Analysis of Variance)
+# ==========================================
+elif tool == "ANOVA (Analysis of Variance)":
+    st.title("ANOVA (Analysis of Variance) Solver")
+    st.write("Perform One-Way ANOVA from raw data groups or solve an incomplete ANOVA summary table with missing values.")
+
+    mode = st.radio("Select ANOVA Mode", ["Solve Incomplete ANOVA Table", "One-Way ANOVA from Raw Data"])
+
+    if mode == "Solve Incomplete ANOVA Table":
+        st.subheader("Incomplete ANOVA Table Solver")
+        st.markdown("""
+        Enter the values you know in the table below, and leave the unknown fields blank. 
+        The solver will use algebraic relationships to compute all missing values, including the **F-statistic** and **p-value**.
+        """)
+        
+        # Grid header
+        c1, c2, c3, c4, c5 = st.columns([2.5, 2, 2, 2, 2])
+        c1.write("**Source of Variation**")
+        c2.write("**Sum of Squares (SS)**")
+        c3.write("**Degrees of Freedom (df)**")
+        c4.write("**Mean Square (MS)**")
+        c5.write("**F-Statistic**")
+
+        # Row 1: Between Treatments
+        c1, c2, c3, c4, c5 = st.columns([2.5, 2, 2, 2, 2])
+        c1.markdown("**Between Treatments (Groups)**")
+        ss_b_str = c2.text_input("SS (Between)", value="", label_visibility="collapsed", key="ss_b")
+        df_b_str = c3.text_input("df (Between)", value="", label_visibility="collapsed", key="df_b")
+        ms_b_str = c4.text_input("MS (Between)", value="", label_visibility="collapsed", key="ms_b")
+        f_stat_str = c5.text_input("F-statistic", value="", label_visibility="collapsed", key="f_stat")
+
+        # Row 2: Within Treatments
+        c1, c2, c3, c4, c5 = st.columns([2.5, 2, 2, 2, 2])
+        c1.markdown("**Within Treatments (Error)**")
+        ss_w_str = c2.text_input("SS (Within)", value="", label_visibility="collapsed", key="ss_w")
+        df_w_str = c3.text_input("df (Within)", value="", label_visibility="collapsed", key="df_w")
+        ms_w_str = c4.text_input("MS (Within)", value="", label_visibility="collapsed", key="ms_w")
+        c5.write("") # F-stat is not defined for Within Treatments
+
+        # Row 3: Total
+        c1, c2, c3, c4, c5 = st.columns([2.5, 2, 2, 2, 2])
+        c1.markdown("**Total**")
+        ss_t_str = c2.text_input("SS (Total)", value="", label_visibility="collapsed", key="ss_t")
+        df_t_str = c3.text_input("df (Total)", value="", label_visibility="collapsed", key="df_t")
+        c4.write("")
+        c5.write("")
+
+        alpha = st.number_input("Significance level (α)", value=0.05, min_value=0.001, max_value=0.5, key="anova_table_alpha")
+
+        def parse_val(s):
+            if not s.strip():
+                return None
+            try:
+                return float(s.strip())
+            except ValueError:
+                return None
+
+        ss_b_val = parse_val(ss_b_str)
+        df_b_val = parse_val(df_b_str)
+        ms_b_val = parse_val(ms_b_str)
+        f_stat_val = parse_val(f_stat_str)
+        ss_w_val = parse_val(ss_w_str)
+        df_w_val = parse_val(df_w_str)
+        ms_w_val = parse_val(ms_w_str)
+        ss_t_val = parse_val(ss_t_str)
+        df_t_val = parse_val(df_t_str)
+
+        # Run solver
+        val = {
+            'ss_b': ss_b_val, 'df_b': df_b_val, 'ms_b': ms_b_val,
+            'ss_w': ss_w_val, 'df_w': df_w_val, 'ms_w': ms_w_val,
+            'ss_t': ss_t_val, 'df_t': df_t_val, 'f_stat': f_stat_val
+        }
+
+        improved = [True]
+        iterations = 0
+        while improved[0] and iterations < 15:
+            improved[0] = False
+            def update(key, value):
+                if val[key] is None and value is not None and not np.isnan(value) and not np.isinf(value):
+                    val[key] = value
+                    improved[0] = True
+
+            # MSB = SSB / DFB
+            if val['ss_b'] is not None and val['df_b'] is not None and val['df_b'] != 0:
+                update('ms_b', val['ss_b'] / val['df_b'])
+            if val['ms_b'] is not None and val['df_b'] is not None:
+                update('ss_b', val['ms_b'] * val['df_b'])
+            if val['ss_b'] is not None and val['ms_b'] is not None and val['ms_b'] != 0:
+                update('df_b', val['ss_b'] / val['ms_b'])
+
+            # MSW = SSW / DFW
+            if val['ss_w'] is not None and val['df_w'] is not None and val['df_w'] != 0:
+                update('ms_w', val['ss_w'] / val['df_w'])
+            if val['ms_w'] is not None and val['df_w'] is not None:
+                update('ss_w', val['ms_w'] * val['df_w'])
+            if val['ss_w'] is not None and val['ms_w'] is not None and val['ms_w'] != 0:
+                update('df_w', val['ss_w'] / val['ms_w'])
+
+            # SST = SSB + SSW
+            if val['ss_t'] is not None and val['ss_b'] is not None:
+                update('ss_w', val['ss_t'] - val['ss_b'])
+            if val['ss_t'] is not None and val['ss_w'] is not None:
+                update('ss_b', val['ss_t'] - val['ss_w'])
+            if val['ss_b'] is not None and val['ss_w'] is not None:
+                update('ss_t', val['ss_b'] + val['ss_w'])
+
+            # DFT = DFB + DFW
+            if val['df_t'] is not None and val['df_b'] is not None:
+                update('df_w', val['df_t'] - val['df_b'])
+            if val['df_t'] is not None and val['df_w'] is not None:
+                update('df_b', val['df_t'] - val['df_w'])
+            if val['df_b'] is not None and val['df_w'] is not None:
+                update('df_t', val['df_b'] + val['df_w'])
+
+            # F = MSB / MSW
+            if val['ms_b'] is not None and val['ms_w'] is not None and val['ms_w'] != 0:
+                update('f_stat', val['ms_b'] / val['ms_w'])
+            if val['f_stat'] is not None and val['ms_w'] is not None:
+                update('ms_b', val['f_stat'] * val['ms_w'])
+            if val['f_stat'] is not None and val['ms_b'] is not None and val['f_stat'] != 0:
+                update('ms_w', val['ms_b'] / val['f_stat'])
+
+            iterations += 1
+
+        st.markdown("---")
+        st.subheader("Resulting ANOVA Table")
+
+        def fmt(v, is_df=False):
+            if v is None:
+                return "—"
+            if is_df:
+                return f"{int(round(v))}" if np.isclose(v, round(v)) else f"{v:.2f}"
+            return f"{v:.4f}"
+
+        # Build results dataframe
+        res_data = {
+            "Source of Variation": ["Between Treatments (Groups)", "Within Treatments (Error)", "Total"],
+            "Sum of Squares (SS)": [
+                fmt(val['ss_b']),
+                fmt(val['ss_w']),
+                fmt(val['ss_t'])
+            ],
+            "Degrees of Freedom (df)": [
+                fmt(val['df_b'], is_df=True),
+                fmt(val['df_w'], is_df=True),
+                fmt(val['df_t'], is_df=True)
+            ],
+            "Mean Square (MS)": [
+                fmt(val['ms_b']),
+                fmt(val['ms_w']),
+                "—"
+            ],
+            "F-Statistic": [
+                fmt(val['f_stat']),
+                "—",
+                "—"
+            ]
+        }
+        res_df = pd.DataFrame(res_data)
+
+        # Style function to color/bold the solved cells
+        def style_solved_cells(df):
+            styles = pd.DataFrame('', index=df.index, columns=df.columns)
+            # Soft blue/cyan highlighting for new/solved values
+            highlight = 'font-weight: bold; color: #38bdf8;'
+            
+            if ss_b_val is None and val['ss_b'] is not None: styles.iloc[0, 1] = highlight
+            if df_b_val is None and val['df_b'] is not None: styles.iloc[0, 2] = highlight
+            if ms_b_val is None and val['ms_b'] is not None: styles.iloc[0, 3] = highlight
+            if f_stat_val is None and val['f_stat'] is not None: styles.iloc[0, 4] = highlight
+            
+            if ss_w_val is None and val['ss_w'] is not None: styles.iloc[1, 1] = highlight
+            if df_w_val is None and val['df_w'] is not None: styles.iloc[1, 2] = highlight
+            if ms_w_val is None and val['ms_w'] is not None: styles.iloc[1, 3] = highlight
+            
+            if ss_t_val is None and val['ss_t'] is not None: styles.iloc[2, 1] = highlight
+            if df_t_val is None and val['df_t'] is not None: styles.iloc[2, 2] = highlight
+            
+            return styles
+
+        st.dataframe(res_df.style.apply(style_solved_cells, axis=None), use_container_width=True)
+        st.caption("*Note: **Blue/Bold values** were solved by the application.*")
+
+        # p-value computation
+        if val['f_stat'] is not None and val['df_b'] is not None and val['df_b'] > 0 and val['df_w'] is not None and val['df_w'] > 0:
+            p_val = 1 - stats.f.cdf(val['f_stat'], val['df_b'], val['df_w'])
+            st.markdown(f"### **p-value = {p_val:.6f}**")
+            if p_val < alpha:
+                st.error(f"**Reject H₀** (At least one treatment mean is significantly different) at α = {alpha}")
+            else:
+                st.success(f"**Fail to reject H₀** (No statistically significant differences among treatment means) at α = {alpha}")
+        else:
+            st.warning("Could not calculate p-value. Please make sure that df(Between), df(Within), and F-statistic can be solved from your inputs.")
+
+    elif mode == "One-Way ANOVA from Raw Data":
+        st.subheader("One-Way ANOVA from Raw Data")
+        st.write("Enter the raw data for each group to compute the ANOVA summary statistics and hypothesis test.")
+
+        num_groups = st.number_input("Number of groups", min_value=2, max_value=10, value=3)
+        groups_data = []
+        group_names = []
+        
+        cols = st.columns(min(num_groups, 3))
+        for i in range(num_groups):
+            col_idx = i % 3
+            with cols[col_idx]:
+                name = st.text_input(f"Group {i+1} Name", value=f"Group {i+1}")
+                raw_txt = st.text_area(f"Data for {name} (comma separated)", value="4, 5, 6" if i==0 else ("7, 8, 9" if i==1 else "6, 7, 8"))
+                group_names.append(name)
+                try:
+                    vals = np.array([float(x.strip()) for x in raw_txt.split(",") if x.strip()])
+                    groups_data.append(vals)
+                except ValueError:
+                    st.error(f"Invalid input in {name}")
+                    groups_data.append(np.array([]))
+
+        if len(groups_data) == num_groups and all(len(g) > 0 for g in groups_data):
+            alpha = st.number_input("Significance level (α)", value=0.05, min_value=0.001, max_value=0.5, key="anova_raw_alpha")
+            
+            # Calculations
+            k = num_groups
+            ns = np.array([len(g) for g in groups_data])
+            N = np.sum(ns)
+            
+            means = np.array([np.mean(g) for g in groups_data])
+            vars_ = np.array([np.var(g, ddof=1) for g in groups_data])
+            
+            grand_mean = np.sum([np.sum(g) for g in groups_data]) / N
+            
+            ssb = np.sum([len(g) * (np.mean(g) - grand_mean)**2 for g in groups_data])
+            ssw = np.sum([np.sum((g - np.mean(g))**2) for g in groups_data])
+            sst = ssb + ssw
+            
+            dfb = k - 1
+            dfw = N - k
+            dft = N - 1
+            
+            msb = ssb / dfb if dfb > 0 else 0
+            msw = ssw / dfw if dfw > 0 else 0
+            
+            f_stat = msb / msw if msw > 0 else 0
+            p_val = 1 - stats.f.cdf(f_stat, dfb, dfw) if dfb > 0 and dfw > 0 else 1.0
+            
+            # Print Summary Stats
+            st.subheader("Summary Statistics")
+            summary_df = pd.DataFrame({
+                "Group": group_names,
+                "n": ns,
+                "Mean": means,
+                "Variance": vars_,
+                "Std Dev": np.sqrt(vars_)
+            }).set_index("Group")
+            st.dataframe(summary_df)
+            
+            # Print ANOVA Table
+            st.subheader("ANOVA Summary Table")
+            anova_df = pd.DataFrame({
+                "Source of Variation": ["Between Groups (Treatments)", "Within Groups (Error)", "Total"],
+                "Sum of Squares (SS)": [ssb, ssw, sst],
+                "df": [dfb, dfw, dft],
+                "Mean Square (MS)": [msb, msw, np.nan],
+                "F-Statistic": [f_stat, np.nan, np.nan]
+            }).set_index("Source of Variation")
+            st.dataframe(anova_df.style.format({
+                "Sum of Squares (SS)": "{:.4f}",
+                "df": "{:.0f}",
+                "Mean Square (MS)": lambda x: f"{x:.4f}" if not np.isnan(x) else "—",
+                "F-Statistic": lambda x: f"{x:.4f}" if not np.isnan(x) else "—"
+            }))
+            
+            st.subheader("Hypothesis Test Decision")
+            st.markdown(f"**F-statistic:** {f_stat:.4f}")
+            st.markdown(f"**p-value:** {p_val:.6f}")
+            
+            if p_val < alpha:
+                st.error(f"**Reject H₀** (At least one group mean is significantly different) at α = {alpha}")
+            else:
+                st.success(f"**Fail to reject H₀** (No statistically significant differences among group means) at α = {alpha}")
+                
+            # Plot boxplot
+            st.subheader("Boxplot Comparison")
+            fig, ax = plt.subplots()
+            ax.boxplot(groups_data, tick_labels=group_names)
+            ax.set_ylabel("Values")
+            ax.set_title("Group Distributions")
+            st.pyplot(fig)
+        else:
+            st.warning("Please ensure all groups have at least one data point entered.")
+
