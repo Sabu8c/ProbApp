@@ -162,6 +162,9 @@ KEYWORD_BANK = {
 st.sidebar.title("ProbApp | MICRO-110")
 st.sidebar.markdown("---")
 
+# Global Documentation Toggle
+show_global_doc = st.sidebar.checkbox("📚 Global Reference Manual", value=False, help="Show the comprehensive reference manual for all subjects, formulas, and definitions.")
+
 # Keyword Search Tool
 search_query = st.sidebar.text_input("Search Keyword / Formula:").strip().lower()
 
@@ -233,6 +236,332 @@ if tool is None:
             "T-Tests (1-sample, Welch, Paired)",
             "ANOVA (Analysis of Variance)"
         ])
+
+# ==========================================
+# Global Reference & Documentation Manual
+# ==========================================
+if show_global_doc:
+    st.title("📚 Global Reference & Documentation Manual")
+    st.write("Welcome to the comprehensive reference manual for all subjects. Here you can find every definition, concept, formula, and table layout across all modules. Press **Ctrl + F** (or **Cmd + F** on macOS) to search this page.")
+    
+    st.markdown("---")
+    
+    # 1. Descriptive Stats - Frequency & Histograms
+    st.header("1. Frequency & Histograms")
+    st.markdown(r"""
+    *   **Class Interval**: The sub-interval or grouping into which raw numerical data is partitioned.
+    *   **Class Width ($w$)**: The size or range of each class interval:
+        $$w = \frac{\text{Maximum Value} - \text{Minimum Value}}{\text{Number of Classes}}$$
+    *   **Frequency ($f_i$)**: The count of raw data observations that fall within class interval $i$.
+    *   **Relative Frequency ($f_{\text{rel}}$)**: The proportion of total observations belonging to a class:
+        $$f_{\text{rel}} = \frac{f_i}{N}$$
+        *(where $N = \sum f_i$ is the total sample size)*
+    *   **Cumulative Frequency**: The running total of frequencies up to the upper boundary of the current class.
+    *   **Frequency Density**: Used in histograms with unequal class widths to represent true proportions:
+        $$\text{Density} = \frac{\text{Relative Frequency}}{\text{Class Width}}$$
+    """)
+    
+    # 2. Descriptive Stats - Summary Stats & Boxplots
+    st.header("2. Summary Stats & Boxplots")
+    st.markdown(r"""
+    *   **Sample Mean ($\bar{X}$)**: The arithmetic average of a sample:
+        $$\bar{X} = \frac{\sum_{i=1}^n X_i}{n}$$
+    *   **Population Mean ($\mu$)**: The true average of the entire population:
+        $$\mu = \frac{\sum_{i=1}^N X_i}{N}$$
+    *   **Sample Variance ($s^2$)**: The measure of dispersion using $n-1$ in the denominator (Bessel's correction) to ensure an unbiased estimator:
+        $$s^2 = \frac{\sum_{i=1}^n (X_i - \bar{X})^2}{n - 1} = \frac{\sum X_i^2 - \frac{(\sum X_i)^2}{n}}{n - 1}$$
+    *   **Sample Standard Deviation ($s$)**: The square root of the sample variance:
+        $$s = \sqrt{s^2}$$
+    *   **Population Variance ($\sigma^2$)**:
+        $$\sigma^2 = \frac{\sum_{i=1}^N (X_i - \mu)^2}{N}$$
+    *   **Trimmed Mean ($p\%$)**: The mean calculated after discarding the smallest and largest $p\%$ of the ordered data values.
+    *   **Quartiles ($Q_1, Q_2, Q_3$)**:
+        *   $Q_1$ (25th percentile): Median of the lower half of the dataset.
+        *   $Q_2$ (50th percentile): The Median of the dataset.
+        *   $Q_3$ (75th percentile): Median of the upper half of the dataset.
+    *   **Interquartile Range (IQR)**:
+        $$\text{IQR} = Q_3 - Q_1$$
+    *   **Boxplot Fences & Outliers**:
+        *   **Lower Inner Fence**: $Q_1 - 1.5 \times \text{IQR}$
+        *   **Upper Inner Fence**: $Q_3 + 1.5 \times \text{IQR}$
+        *   **Outliers**: Observations falling outside the inner fences.
+    """)
+    
+    # 3. Set Operations (A, B, C)
+    st.header("3. Set Operations (A, B, C)")
+    st.markdown(r"""
+    *   **Universal Set ($S$ or $\Omega$)**: The set containing all possible elements under study (the sample space).
+    *   **Union ($A \cup B$)**: The set of elements belonging to set $A$ OR set $B$ (or both):
+        $$A \cup B = \{x \mid x \in A \text{ or } x \in B\}$$
+    *   **Intersection ($A \cap B$)**: The set of elements belonging to set $A$ AND set $B$:
+        $$A \cap B = \{x \mid x \in A \text{ and } x \in B\}$$
+    *   **Complement ($A^c$ or $A'$)**: The set of elements in the universal set that do not belong to $A$:
+        $$A^c = \{x \in S \mid x \notin A\}$$
+    *   **Set Difference ($A \setminus B$)**: Elements in $A$ that are not in $B$:
+        $$A \setminus B = \{x \mid x \in A \text{ and } x \notin B\}$$
+    *   **De Morgan's Laws**:
+        1.  $(A \cup B)^c = A^c \cap B^c$
+        2.  $(A \cap B)^c = A^c \cup B^c$
+    """)
+    
+    # 4. Sample Space Generator
+    st.header("4. Sample Space Generator")
+    st.markdown(r"""
+    *   **Outcome**: Any single possible result of a random experiment.
+    *   **Sample Space ($S$)**: The set of all possible outcomes.
+    *   **Cartesian Product ($A \times B$)**: All ordered pairs $(a, b)$ where $a \in A$ and $b \in B$.
+        $$|A \times B| = |A| \times |B|$$
+    """)
+    
+    # 5. Probability Rules (2- & 3-event)
+    st.header("5. Probability Rules (2- & 3-Event)")
+    st.markdown(r"""
+    *   **Axioms of Probability**:
+        1.  $0 \le P(A) \le 1$
+        2.  $P(S) = 1$
+        3.  For disjoint events, $P(\bigcup A_i) = \sum P(A_i)$
+    *   **Complement Rule**:
+        $$P(A^c) = 1 - P(A)$$
+    *   **General Addition Rule (2 events)**:
+        $$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$
+    *   **General Addition Rule (3 events)**:
+        $$P(A \cup B \cup C) = P(A) + P(B) + P(C) - P(A \cap B) - P(A \cap C) - P(B \cap C) + P(A \cap B \cap C)$$
+    *   **Conditional Probability**: The probability of $A$ given that $B$ has occurred:
+        $$P(A \mid B) = \frac{P(A \cap B)}{P(B)}$$
+    *   **General Multiplication Rule**:
+        $$P(A \cap B) = P(A \mid B)P(B) = P(B \mid A)P(A)$$
+    *   **Independence**: Two events $A$ and $B$ are independent if and only if:
+        $$P(A \cap B) = P(A) \times P(B) \quad \text{or} \quad P(A \mid B) = P(A)$$
+    *   **Mutually Exclusive (Disjoint)**: Events that cannot occur simultaneously:
+        $$P(A \cap B) = 0 \implies P(A \cup B) = P(A) + P(B)$$
+    """)
+    
+    # 6. Total Probability & Bayes' Theorem
+    st.header("6. Total Probability & Bayes' Theorem")
+    st.markdown(r"""
+    *   **Partition**: A collection of mutually exclusive and exhaustive events $B_1, B_2, \dots, B_n$ of the sample space $S$.
+    *   **Law of Total Probability**:
+        $$P(A) = \sum_{i=1}^n P(A \mid B_i)P(B_i)$$
+    *   **Bayes' Theorem**: Updates the prior probability $P(B_i)$ of a hypothesis to a posterior probability $P(B_i \mid A)$ after observing event $A$:
+        $$P(B_i \mid A) = \frac{P(A \mid B_i)P(B_i)}{P(A)} = \frac{P(A \mid B_i)P(B_i)}{\sum_{j=1}^n P(A \mid B_j)P(B_j)}$$
+    """)
+    
+    # 7. Combinatorics & System Reliability
+    st.header("7. Combinatorics & System Reliability")
+    st.markdown(r"""
+    *   **Factorial ($n!$)**: The product of all positive integers less than or equal to $n$:
+        $$n! = n \times (n-1) \times \dots \times 1 \quad (\text{with } 0! = 1)$$
+    *   **Permutations ($P_{n,r}$)**: Selecting $r$ items from $n$ distinct items where **order matters**:
+        $$P(n, r) = \frac{n!}{(n-r)!}$$
+    *   **Combinations ($C_{n,r}$ or $\binom{n}{r}$)**: Selecting $r$ items from $n$ distinct items where **order does not matter**:
+        $$\binom{n}{r} = \frac{n!}{r!(n-r)!}$$
+    *   **Series System Reliability**: A system fails if *any* component fails:
+        $$R_{\text{system}} = \prod_{i=1}^m R_i$$
+    *   **Parallel System Reliability**: A system fails only if *all* components fail (built-in redundancy):
+        $$R_{\text{system}} = 1 - \prod_{i=1}^m (1 - R_i)$$
+    """)
+    
+    # 8. Custom Discrete RV
+    st.header("8. Custom Discrete Random Variables")
+    st.markdown(r"""
+    *   **Probability Mass Function (PMF, $p(x)$)**: Specifies the probability that a discrete random variable $X$ is exactly equal to some value $x$:
+        $$p(x) = P(X = x) \quad \text{subject to } \sum_{i} p(x_i) = 1 \text{ and } p(x_i) \ge 0$$
+    *   **Cumulative Distribution Function (CDF, $F(x)$)**:
+        $$F(x) = P(X \le x) = \sum_{x_i \le x} p(x_i)$$
+    *   **Expected Value (Mean $\mu$)**: The long-run average value of $X$:
+        $$E(X) = \mu = \sum_i x_i p(x_i)$$
+    *   **Variance ($\sigma^2$ or $Var(X)$)**:
+        $$Var(X) = \sigma^2 = E[(X - \mu)^2] = \sum_i (x_i - \mu)^2 p(x_i) = E(X^2) - [E(X)]^2$$
+        *(where $E(X^2) = \sum x_i^2 p(x_i)$)*
+    *   **Standard Deviation ($\sigma$)**:
+        $$\sigma = \sqrt{Var(X)}$$
+    """)
+    
+    # 9. Binomial Distribution
+    st.header("9. Binomial Distribution")
+    st.markdown(r"""
+    *   **Bernoulli Trial**: An experiment with exactly two outcomes: Success ($S$) with probability $p$ and Failure ($F$) with probability $1-p$.
+    *   **Binomial RV**: The number of successes $X$ in $n$ independent trials:
+        $$X \sim \text{Binomial}(n, p)$$
+    *   **Probability Mass Function (PMF)**:
+        $$P(X = x) = \binom{n}{x} p^x (1-p)^{n-x} \quad \text{for } x = 0, 1, \dots, n$$
+    *   **Expected Value (Mean)**:
+        $$E(X) = np$$
+    *   **Variance**:
+        $$Var(X) = np(1-p)$$
+    """)
+    
+    # 10. Poisson Distribution
+    st.header("10. Poisson Distribution")
+    st.markdown(r"""
+    *   **Poisson Process**: Models the number of events occurring within a fixed interval of time or space.
+    *   **Probability Mass Function (PMF)**:
+        $$P(X = x) = \frac{e^{-\lambda} \lambda^x}{x!} \quad \text{for } x = 0, 1, 2, \dots$$
+        *(where $\lambda$ is the expected number of occurrences in that interval)*
+    *   **Rate Scaling**: If events occur at an average rate of $\alpha$ per unit, and the interval size is $t$, then:
+        $$\lambda = \alpha \times t$$
+    *   **Expected Value & Variance**:
+        $$E(X) = \lambda, \quad Var(X) = \lambda$$
+    """)
+    
+    # 11. Normal Distribution
+    st.header("11. Normal Distribution")
+    st.markdown(r"""
+    *   **Probability Density Function (PDF)**:
+        $$f(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} \quad \text{for } x \in (-\infty, \infty)$$
+    *   **Standard Normal Distribution ($Z$)**: A normal distribution with mean $\mu=0$ and standard deviation $\sigma=1$:
+        $$Z = \frac{X - \mu}{\sigma} \sim N(0, 1)$$
+    *   **Quantile / Inverse CDF (PPF)**: Finding the value $x_p$ such that $P(X \le x_p) = p$.
+    """)
+    
+    # 12. Named Continuous (Uniform/Exp/Geometric)
+    st.header("12. Named Distributions (Uniform, Exponential, Geometric)")
+    st.markdown(r"""
+    *   **Continuous Uniform Distribution $U(a, b)$**:
+        *   **PDF**: $f(x) = \frac{1}{b-a}$ for $a \le x \le b$
+        *   **CDF**: $F(x) = \frac{x-a}{b-a}$ for $a \le x \le b$
+        *   **Mean & Variance**:
+            $$E(X) = \frac{a+b}{2}, \quad Var(X) = \frac{(b-a)^2}{12}$$
+    *   **Exponential Distribution $Exp(\lambda)$** (Models time/space between Poisson events):
+        *   **PDF**: $f(x) = \lambda e^{-\lambda x}$ for $x \ge 0$
+        *   **CDF**: $F(x) = 1 - e^{-\lambda x}$ for $x \ge 0$
+        *   **Mean & Variance**:
+            $$E(X) = \frac{1}{\lambda}, \quad Var(X) = \frac{1}{\lambda^2}$$
+        *   *Memoryless Property*: $P(X > s + t \mid X > s) = P(X > t)$
+    *   **Geometric Distribution $Geom(p)$** (Discrete: number of Bernoulli trials until first success):
+        *   **PMF**: $P(X = x) = (1-p)^{x-1}p$ for $x = 1, 2, \dots$
+        *   **Mean & Variance**:
+            $$E(X) = \frac{1}{p}, \quad Var(X) = \frac{1-p}{p^2}$$
+    """)
+    
+    # 13. Custom Continuous PDF
+    st.header("13. Custom Continuous PDFs")
+    st.markdown(r"""
+    *   **PDF Properties**:
+        1.  $f(x) \ge 0$ for all $x$
+        2.  $\int_{-\infty}^{\infty} f(x) dx = 1$
+    *   **Probability Calculations**:
+        $$P(a \le X \le b) = \int_a^b f(x) dx$$
+    *   **CDF ($F(x)$)**:
+        $$F(x) = \int_{-\infty}^x f(t) dt$$
+    *   **Mean (Expected Value)**:
+        $$E(X) = \int_{-\infty}^{\infty} x f(x) dx$$
+    *   **Variance**:
+        $$Var(X) = E(X^2) - [E(X)]^2 = \int_{-\infty}^{\infty} x^2 f(x) dx - \left(\int_{-\infty}^{\infty} x f(x) dx\right)^2$$
+    """)
+    
+    # 14. Joint Discrete PMF
+    st.header("14. Joint Discrete PMFs")
+    st.markdown(r"""
+    *   **Joint Probability Mass Function ($p(x, y)$)**:
+        $$p(x, y) = P(X = x, Y = y) \quad \text{subject to } \sum_{x} \sum_{y} p(x, y) = 1$$
+    *   **Marginal Probability Mass Functions**:
+        $$p_X(x) = \sum_{y} p(x, y), \quad p_Y(y) = \sum_{x} p(x, y)$$
+    *   **Covariance ($Cov(X, Y)$)**:
+        $$Cov(X, Y) = E[(X - \mu_X)(Y - \mu_Y)] = E(XY) - E(X)E(Y)$$
+        *(where $E(XY) = \sum_x \sum_y x y p(x, y)$)*
+    *   **Correlation Coefficient ($\rho$)**:
+        $$\rho = \frac{Cov(X, Y)}{\sigma_X \sigma_Y} \quad \text{where } -1 \le \rho \le 1$$
+    *   **Independence**: $X$ and $Y$ are independent discrete random variables if and only if:
+        $$p(x, y) = p_X(x) \times p_Y(y) \quad \text{for all } x, y$$
+    """)
+    
+    # 15. Joint Continuous PDF
+    st.header("15. Joint Continuous PDFs")
+    st.markdown(r"""
+    *   **Joint PDF ($f(x, y)$)**:
+        $$\int_{-\infty}^{\infty} \int_{-\infty}^{\infty} f(x, y) dx dy = 1$$
+    *   **Marginal Probability Density Functions**:
+        $$f_X(x) = \int_{-\infty}^{\infty} f(x, y) dy, \quad f_Y(y) = \int_{-\infty}^{\infty} f(x, y) dx$$
+    *   **Expected Value**:
+        $$E(g(X, Y)) = \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} g(x, y) f(x, y) dx dy$$
+    *   **Independent Exponential Distributions**: If $X \sim Exp(\lambda_1)$ and $Y \sim Exp(\lambda_2)$ are independent:
+        $$f(x, y) = \lambda_1 \lambda_2 e^{-(\lambda_1 x + \lambda_2 y)} \quad \text{for } x, y \ge 0$$
+    """)
+    
+    # 16. Covariance & Correlation
+    st.header("16. Covariance & Correlation")
+    st.markdown(r"""
+    *   **Sample Covariance ($s_{XY}$)**:
+        $$s_{XY} = \frac{\sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})}{n - 1}$$
+    *   **Sample Correlation ($r$)**:
+        $$r = \frac{s_{XY}}{s_X s_Y}$$
+    """)
+    
+    # 17. Sampling Distributions & CLT
+    st.header("17. Sampling Distributions & CLT")
+    st.markdown(r"""
+    *   **Sample Mean Distribution ($\bar{X}$)**: If random samples of size $n$ are drawn from a population with mean $\mu$ and std dev $\sigma$:
+        $$E(\bar{X}) = \mu$$
+        $$\text{Standard Error (SE) } = \sigma_{\bar{X}} = \frac{\sigma}{\sqrt{n}}$$
+    *   **Central Limit Theorem (CLT)**: Regardless of the shape of the population distribution, as sample size $n$ grows large (usually $n \ge 30$), the sampling distribution of $\bar{X}$ approaches a normal distribution:
+        $$\bar{X} \approx N\left(\mu, \frac{\sigma^2}{n}\right)$$
+    """)
+    
+    # 18. Method of Moments & MLE
+    st.header("18. Method of Moments & MLE")
+    st.markdown(r"""
+    *   **Point Estimator**: A single number computed from sample data used to estimate a population parameter.
+    *   **Unbiased Estimator**: An estimator $\hat{\theta}$ is unbiased if $E(\hat{\theta}) = \theta$.
+    *   **Method of Moments (MoM)**: Equates the sample moments to the theoretical moments:
+        $$\bar{X} = E(X) \implies \text{Solve for parameters.}$$
+    *   **Maximum Likelihood Estimator (MLE)**: Estimates parameter(s) by maximizing the Likelihood Function $L(\theta)$ (or Log-Likelihood $\ln L(\theta)$):
+        $$L(\theta) = \prod_{i=1}^n f(x_i; \theta) \implies \text{Maximize with respect to } \theta.$$
+    """)
+    
+    # 19. Confidence Intervals
+    st.header("19. Confidence Intervals")
+    st.markdown(r"""
+    *   **Z-Interval (Population standard deviation $\sigma$ known)**:
+        $$\bar{X} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
+    *   **T-Interval (Population standard deviation $\sigma$ unknown)**:
+        $$\bar{X} \pm t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$$
+    *   **One-Sample Proportion Interval ($p$)**:
+        $$\hat{p} \pm z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
+    *   **Sample Size Estimation**:
+        *   **For Mean ($\mu$)**: $n = \left(\frac{z_{\alpha/2} \sigma}{E}\right)^2$  *(where $E$ is the margin of error)*
+        *   **For Proportion ($p$)**: $n = \frac{z_{\alpha/2}^2 \hat{p}(1-\hat{p})}{E^2}$ *(use $\hat{p} = 0.5$ if guessed proportion is unknown)*
+    """)
+    
+    # 20. Z-Tests (1- & 2-sample)
+    st.header("20. Z-Tests (1- & 2-Sample)")
+    st.markdown(r"""
+    *   **One-Sample Z-Test**: Tests a sample mean against a hypothesized population mean $\mu_0$ when $\sigma$ is known:
+        $$z = \frac{\bar{X} - \mu_0}{\sigma / \sqrt{n}}$$
+    *   **Two-Sample Z-Test**: Compares the means of two independent samples when populations standard deviations $\sigma_1, \sigma_2$ are known:
+        $$z = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}}$$
+    """)
+    
+    # 21. T-Tests (1-sample, Welch, Paired)
+    st.header("21. T-Tests (1-Sample, Welch Independent, Paired)")
+    st.markdown(r"""
+    *   **One-Sample T-Test**: Tests a sample mean when $\sigma$ is unknown:
+        $$t = \frac{\bar{X} - \mu_0}{s / \sqrt{n}} \quad \text{with } df = n - 1$$
+    *   **Two-Sample Welch's T-Test**: Assumes independent samples with unequal variances:
+        $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+        $$\text{Degrees of Freedom (Welch-Satterthwaite df)} = \frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}\right)^2}{\frac{(s_1^2/n_1)^2}{n_1 - 1} + \frac{(s_2^2/n_2)^2}{n_2 - 1}}$$
+    *   **Paired T-Test**: Analyzes the difference $d_i = Y_i - X_i$ of dependent (paired) observations:
+        $$t = \frac{\bar{d} - \Delta_0}{s_d / \sqrt{n}} \quad \text{with } df = n - 1$$
+    """)
+    
+    # 22. ANOVA (Analysis of Variance)
+    st.header("22. ANOVA (Analysis of Variance)")
+    st.markdown(r"""
+    *   **Between-Groups Sum of Squares ($SSB$)**: Variation due to differences between group averages:
+        $$SSB = \sum_{j=1}^k n_j (\bar{Y}_j - \bar{Y}_{\cdot})^2 \quad \text{with } df_b = k - 1$$
+    *   **Within-Groups Sum of Squares ($SSW$ / Residual Error)**: Variation due to individual differences within groups:
+        $$SSW = \sum_{j=1}^k (n_j - 1)s_j^2 \quad \text{with } df_w = N - k$$
+    *   **Total Sum of Squares ($SST$)**:
+        $$SST = SSB + SSW \quad \text{with } df_t = N - 1$$
+    *   **Mean Squares ($MS$)**:
+        $$MSB = \frac{SSB}{df_b}, \quad MSW = \frac{SSW}{df_w}$$
+    *   **F-Statistic**:
+        $$F = \frac{MSB}{MSW} \quad \text{with } df = (df_b, df_w)$$
+    *   **Critical F-value ($F_{\text{crit}}$)**: The F-threshold at significance level $\alpha$:
+        $$F_{\text{crit}} = F_{\alpha, df_b, df_w}$$
+    """)
+    
+    st.stop()
 
 # ==========================================
 # 1. Descriptive Stats - Frequency & Histograms
@@ -1956,9 +2285,9 @@ elif tool == "ANOVA (Analysis of Variance)":
     st.title("ANOVA (Analysis of Variance) Solver")
     st.write("Perform One-Way ANOVA from raw data groups or solve an incomplete ANOVA summary table with missing values.")
 
-    mode = st.radio("Select ANOVA Mode", ["Solve Incomplete ANOVA Table", "One-Way ANOVA from Raw Data"])
+    tab1, tab2, tab3 = st.tabs(["Solve Incomplete ANOVA Table", "One-Way ANOVA from Raw Data", "ANOVA Reference & Documentation"])
 
-    if mode == "Solve Incomplete ANOVA Table":
+    with tab1:
         st.subheader("Incomplete ANOVA Table Solver")
         st.markdown("""
         Enter the values you know in the table below, and leave the unknown fields blank. 
@@ -2134,18 +2463,24 @@ elif tool == "ANOVA (Analysis of Variance)":
         st.dataframe(res_df.style.apply(style_solved_cells, axis=None), use_container_width=True)
         st.caption("*Note: **Blue/Bold values** were solved by the application.*")
 
-        # p-value computation
+        # p-value & F-critical computation
         if val['f_stat'] is not None and val['df_b'] is not None and val['df_b'] > 0 and val['df_w'] is not None and val['df_w'] > 0:
             p_val = 1 - stats.f.cdf(val['f_stat'], val['df_b'], val['df_w'])
-            st.markdown(f"### **p-value = {p_val:.6f}**")
+            f_crit = stats.f.ppf(1 - alpha, val['df_b'], val['df_w'])
+            
+            st.markdown("### **Hypothesis Test Decision**")
+            st.markdown(f"**F-statistic:** {val['f_stat']:.4f}")
+            st.markdown(f"**Critical F-value ($F_{{\\text{{crit}}}}$):** {f_crit:.4f}")
+            st.markdown(f"**p-value:** {p_val:.6f}")
+            
             if p_val < alpha:
-                st.error(f"**Reject H₀** (At least one treatment mean is significantly different) at α = {alpha}")
+                st.error(f"**Reject H₀** (At least one treatment mean is significantly different) at α = {alpha} (since F-statistic = {val['f_stat']:.4f} > $F_{{\\text{{crit}}}}$ = {f_crit:.4f})")
             else:
-                st.success(f"**Fail to reject H₀** (No statistically significant differences among treatment means) at α = {alpha}")
+                st.success(f"**Fail to reject H₀** (No statistically significant differences among treatment means) at α = {alpha} (since F-statistic = {val['f_stat']:.4f} ≤ $F_{{\\text{{crit}}}}$ = {f_crit:.4f})")
         else:
-            st.warning("Could not calculate p-value. Please make sure that df(Between), df(Within), and F-statistic can be solved from your inputs.")
+            st.warning("Could not calculate p-value and Critical F-value. Please make sure that df(Between), df(Within), and F-statistic can be solved from your inputs.")
 
-    elif mode == "One-Way ANOVA from Raw Data":
+    with tab2:
         st.subheader("One-Way ANOVA from Raw Data")
         st.write("Enter the raw data for each group to compute the ANOVA summary statistics and hypothesis test.")
 
@@ -2222,13 +2557,15 @@ elif tool == "ANOVA (Analysis of Variance)":
             }))
             
             st.subheader("Hypothesis Test Decision")
+            f_crit = stats.f.ppf(1 - alpha, dfb, dfw) if dfb > 0 and dfw > 0 else np.nan
             st.markdown(f"**F-statistic:** {f_stat:.4f}")
+            st.markdown(f"**Critical F-value ($F_{{\\text{{crit}}}}$):** {f_crit:.4f}" if not np.isnan(f_crit) else "**Critical F-value ($F_{{\\text{{crit}}}}$):** —")
             st.markdown(f"**p-value:** {p_val:.6f}")
             
             if p_val < alpha:
-                st.error(f"**Reject H₀** (At least one group mean is significantly different) at α = {alpha}")
+                st.error(f"**Reject H₀** (At least one group mean is significantly different) at α = {alpha} (since F-statistic = {f_stat:.4f} > $F_{{\\text{{crit}}}}$ = {f_crit:.4f})")
             else:
-                st.success(f"**Fail to reject H₀** (No statistically significant differences among group means) at α = {alpha}")
+                st.success(f"**Fail to reject H₀** (No statistically significant differences among group means) at α = {alpha} (since F-statistic = {f_stat:.4f} ≤ $F_{{\\text{{crit}}}}$ = {f_crit:.4f})")
                 
             # Plot boxplot
             st.subheader("Boxplot Comparison")
@@ -2239,4 +2576,116 @@ elif tool == "ANOVA (Analysis of Variance)":
             st.pyplot(fig)
         else:
             st.warning("Please ensure all groups have at least one data point entered.")
+
+    with tab3:
+        st.subheader("ANOVA Reference & Documentation")
+        st.markdown(r"""
+        This tab provides a comprehensive reference on **One-Way Analysis of Variance (ANOVA)**, including definitions, assumptions, algebraic equations, table structures, and step-by-step methods to solve incomplete tables.
+        
+        Use **Ctrl + F** (or **Cmd + F** on macOS) to search this page for definitions, keywords, or formulas.
+        """)
+
+        st.markdown("---")
+
+        st.markdown("### 1. Conceptual Overview & Definitions")
+        st.markdown(r"""
+        *   **ANOVA (Analysis of Variance)**: A statistical method used to compare the means of two or more independent groups to determine if at least one group mean is statistically different from the others.
+        *   **One-Way ANOVA**: An ANOVA test with only one independent variable (factor) having two or more levels (groups/treatments).
+        *   **Null Hypothesis ($H_0$)**: Assumes that all group means are equal.
+            $$H_0: \mu_1 = \mu_2 = \mu_3 = \dots = \mu_k$$
+        *   **Alternative Hypothesis ($H_a$)**: Assumes that at least one group mean is different from the others.
+            $$H_a: \text{At least one } \mu_i \neq \mu_j \text{ for } i \neq j$$
+        *   **Factor**: The independent variable being examined (e.g., "Type of Diet").
+        *   **Levels (Treatments / Groups)**: The specific categories of the factor (e.g., "Keto", "Vegan", "Low-Carb").
+        *   **Response Variable**: The dependent, continuous variable being measured (e.g., "Weight Loss").
+        *   **Significance Level ($\alpha$)**: The probability of rejecting the null hypothesis when it is true (typically 0.05).
+        """)
+
+        st.markdown("### 2. Fundamental Assumptions of ANOVA")
+        st.markdown(r"""
+        To ensure valid ANOVA results, the dataset must satisfy the following assumptions:
+        1.  **Independence**: Observations within and between groups must be independent of one another.
+        2.  **Normality**: The response variable must be normally distributed within each group.
+        3.  **Homogeneity of Variances (Homoscedasticity)**: The variances of the response variable must be equal across all groups ($ \sigma_1^2 = \sigma_2^2 = \dots = \sigma_k^2 $).
+        """)
+
+        st.markdown("### 3. Summary of Formulas & Calculations")
+        st.markdown(r"""
+        Let $k$ be the number of groups, $n_j$ be the sample size of group $j$, and $N$ be the total sample size across all groups ($N = \sum n_j$).
+        
+        #### **A. Degrees of Freedom (df)**
+        *   **Between-Groups df ($df_{\text{num}}$ or $df_b$)**:
+            $$df_b = k - 1$$
+        *   **Within-Groups df ($df_{\text{den}}$ or $df_w$)**:
+            $$df_w = N - k$$
+        *   **Total df ($df_t$)**:
+            $$df_t = N - 1 = df_b + df_w$$
+
+        #### **B. Sum of Squares (SS)**
+        *   **Sum of Squares Between ($SSB$ or $SSTr$)**: Measures the variation of group means around the grand mean.
+            $$SSB = \sum_{j=1}^k n_j (\bar{X}_j - \bar{X}_{\cdot})^2 = \sum_{j=1}^k \frac{T_j^2}{n_j} - \frac{G^2}{N}$$
+            *(where $T_j$ is the sum of group $j$, $G$ is the grand total, and $\bar{X}_{\cdot}$ is the grand mean)*.
+        *   **Sum of Squares Within ($SSW$ or $SSE$)**: Measures the variation of individual observations within their groups (residual error).
+            $$SSW = \sum_{j=1}^k \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_j)^2 = \sum_{j=1}^k (n_j - 1)s_j^2$$
+            *(where $s_j^2$ is the sample variance of group $j$)*.
+        *   **Sum of Squares Total ($SST$)**: Measures the total variation in the data.
+            $$SST = SSB + SSW = \sum_{j=1}^k \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{\cdot})^2 = \sum X^2 - \frac{G^2}{N}$$
+
+        #### **C. Mean Squares (MS)**
+        Mean Squares represent variances and are calculated by dividing the Sum of Squares by their respective degrees of freedom:
+        *   **Mean Square Between ($MSB$ or $MSTr$)**:
+            $$MSB = \frac{SSB}{df_b}$$
+        *   **Mean Square Within ($MSW$ or $MSE$)**:
+            $$MSW = \frac{SSW}{df_w}$$
+
+        #### **D. F-Statistic & Significance**
+        *   **F-Statistic (F-Ratio)**: The ratio of the variance between groups to the variance within groups.
+            $$F = \frac{MSB}{MSW}$$
+        *   **Critical F-value ($F_{\text{crit}}$)**: The threshold value from the F-distribution for a given $\alpha$.
+            $$F_{\text{crit}} = F_{\alpha, df_b, df_w}$$
+        *   **p-value**: The probability of obtaining an F-statistic at least as extreme as the observed one, under $H_0$.
+            $$p = P(F_{df_b, df_w} \ge F)$$
+        """)
+
+        st.markdown("### 4. Standard ANOVA Summary Table")
+        st.markdown(r"""
+        The results of an ANOVA test are traditionally organized into a summary table:
+
+        | Source of Variation | Sum of Squares (SS) | Degrees of Freedom (df) | Mean Square (MS) | F-Statistic |
+        | :--- | :--- | :--- | :--- | :--- |
+        | **Between (Groups)** | $SSB$ | $df_b = k - 1$ | $MSB = \frac{SSB}{df_b}$ | $F = \frac{MSB}{MSW}$ |
+        | **Within (Error)** | $SSW$ | $df_w = N - k$ | $MSW = \frac{SSW}{df_w}$ | |
+        | **Total** | $SST$ | $df_t = N - 1$ | | |
+        """)
+
+        st.markdown("### 5. Solving Incomplete ANOVA Tables (Algebraic Shortcuts)")
+        st.markdown(r"""
+        In many academic exercises, you are given an incomplete ANOVA table and must solve for the missing values. Below are the core equations to perform these steps iteratively:
+        
+        1.  **Additive Sum of Squares**:
+            *   $SST = SSB + SSW$
+            *   $SSB = SST - SSW$
+            *   $SSW = SST - SSB$
+        2.  **Additive Degrees of Freedom**:
+            *   $df_t = df_b + df_w$
+            *   $df_b = df_t - df_w$
+            *   $df_w = df_t - df_b$
+        3.  **MS to SS & df Connections**:
+            *   $SSB = MSB \times df_b$
+            *   $SSW = MSW \times df_w$
+            *   $df_b = \frac{SSB}{MSB}$
+            *   $df_w = \frac{SSW}{MSW}$
+        4.  **F-statistic Connections**:
+            *   $F = \frac{MSB}{MSW}$
+            *   $MSB = F \times MSW$
+            *   $MSW = \frac{MSB}{F}$
+        """)
+
+        st.markdown("### 6. Interpretation Rules & Post-Hoc Tests")
+        st.markdown(r"""
+        *   **Decision Rules**:
+            *   If **$p \le \alpha$** (or **$F \ge F_{\text{crit}}$**): **Reject $H_0$**. Conclude that at least one group mean is significantly different.
+            *   If **$p > \alpha$** (or **$F < F_{\text{crit}}$**): **Fail to reject $H_0$**. Conclude there is insufficient evidence to show any significant difference among the group means.
+        *   **Post-Hoc Tests (e.g., Tukey's HSD)**: If you reject $H_0$, it does not tell you *which* specific groups differ. A post-hoc pairwise comparison (such as Tukey's Honestly Significant Difference) must be performed to identify the specific pairs of groups with significant differences.
+        """)
 
